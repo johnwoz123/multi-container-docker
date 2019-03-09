@@ -14,8 +14,22 @@ after_success:
   - docker build -t jwozniak/multi-worker ./worker
     # Log into the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-    # Take those images and push them to docke hub
+    # Take those images and push them to docker hub
   - docker push jwozniak/multi-client
   - docker push jwozniak/multi-nginx
   - docker push jwozniak/multi-server
   - docker push jwozniak/multi-worker
+
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-1"
+  app: "docker-react"
+  env: "DockerReact-env"
+  bucket_name: "elasticbeanstalk-us-east-1-302576716697"
+  bucket_path: "docker-multi"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"
